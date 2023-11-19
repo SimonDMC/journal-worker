@@ -1,4 +1,7 @@
-import { bootstrapHandle } from './bootstrap';
+import { bootstrapHandle } from './routes/bootstrap';
+import { getEntryHandle } from './routes/get-entry';
+import { loginHandle } from './routes/login';
+import { setEntryHandle } from './routes/set-entry';
 import { statsHandle } from './routes/stats';
 
 export interface Env {
@@ -8,12 +11,13 @@ export interface Env {
 type Route = [method: string, path: RegExp, handler: (request: Request, env: Env, ctx: ExecutionContext) => Promise<Response>];
 
 const routes: Route[] = [
-	['GET', /^.+\/stats$/, statsHandle],
+	['GET', /^\/stats$/, statsHandle],
 	['GET', /^\/bootstrap$/, bootstrapHandle],
-	/* ['GET', /^.+\/entry\/\d{4}-\d{2}-\d{2}$/, getEntryHandle],
-	['POST', /^.+\/entry\/\d{4}-\d{2}-\d{2}$/, setEntryHandle],
+	//['GET', /^.+\/search$/, searchHandle],
+	['GET', /^\/entry\/\d{4}-\d{2}-\d{2}$/, getEntryHandle],
+	['POST', /^\/entry\/\d{4}-\d{2}-\d{2}$/, setEntryHandle],
 	['POST', /^\/login$/, loginHandle],
-	['POST', /^\/change-password$/, changePasswordHandle], */
+	//['POST', /^\/change-password$/, changePasswordHandle],
 ];
 
 export default {

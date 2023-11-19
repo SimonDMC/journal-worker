@@ -1,5 +1,5 @@
-import { Env } from '.';
-import olddata from '../olddata.json';
+import { Env } from '..';
+import olddata from '../../olddata.json';
 import bcrypt from 'bcryptjs';
 
 export const bootstrapHandle = async (request: Request, env: Env): Promise<Response> => {

@@ -24,24 +24,21 @@ export const statsHandle = async (request: Request, env: Env, ctx: ExecutionCont
 		return new Response('Unauthorized', { status: 401 });
 	}
 
-	// get username from URL
-	const url = new URL(request.url);
-	const username = url.pathname.split('/')[1];
-
 	// check if session exists
-	const session = await env.DB.prepare('SELECT * FROM sessions WHERE token = ? AND user_id = (SELECT id FROM users WHERE username = ?)')
-		.bind(auth, username)
-		.run();
+	const session = await env.DB.prepare('SELECT user_id FROM sessions WHERE token = ?').bind(auth).run();
 
 	if (session.results.length === 0) {
 		return new Response('Unauthorized', { status: 401 });
 	}
 
+	// get user_id from session
+	const user_id = session.results[0].user_id;
+
 	// get data from database
 	const data = await env.DB.prepare(
-		'SELECT E.word_count, E.date, T.name AS tag FROM Users U JOIN Entries E ON U.id = E.user_id LEFT JOIN Tags T ON E.id = T.entry_id WHERE U.username = ? GROUP BY U.username, E.id, T.name ORDER BY E.id;'
+		'SELECT E.word_count, E.date, T.name AS tag FROM Users U JOIN Entries E ON U.id = E.user_id LEFT JOIN Tags T ON E.id = T.entry_id WHERE U.id = ? GROUP BY U.username, E.id, T.name ORDER BY E.id;'
 	)
-		.bind(username)
+		.bind(user_id)
 		.run();
 
 	// get into result format

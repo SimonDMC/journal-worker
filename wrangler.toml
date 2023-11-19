@@ -5,4 +5,4 @@ compatibility_date = "2023-10-30"
 [[d1_databases]]
 binding = "DB" # i.e. available in your Worker on env.DB
 database_name = "JOURNAL"
-database_id = "26ebb31f-ca9d-447e-9ca0-251b5e876790
+database_id = "26ebb31f-ca9d-447e-9ca0-251b5e876790"

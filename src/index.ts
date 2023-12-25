@@ -28,19 +28,25 @@ export default {
 		const path = url.pathname;
 		const method = request.method;
 
+		let response;
+
 		// find route by method and path
 		const route = routes.find(([m, p]) => m === method && p.test(path));
-		if (!route) {
-			return new Response('Not found', { status: 404 });
+		const preflight = routes.find(([m, p]) => p.test(path));
+		if (route) {
+			// execute route handler and await the response
+			response = await route[2](request, env, ctx);
+		} else if (preflight && method === 'OPTIONS') {
+			// accept preflight requests
+			response = new Response(null, { status: 204 });
+		} else {
+			response = new Response('Not found', { status: 404 });
 		}
-
-		// execute route handler and await the response
-		const response = await route[2](request, env, ctx);
 
 		// append CORS headers
 		response.headers.set('Access-Control-Allow-Origin', '*');
 		response.headers.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-		response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+		response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
 		return response;
 	},

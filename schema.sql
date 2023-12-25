@@ -15,6 +15,8 @@ CREATE TABLE Entries (
   user_id INTEGER NOT NULL,
   date TEXT NOT NULL,
   content TEXT NOT NULL,
+  mood INTEGER,
+  location INTEGER,
   word_count INTEGER NOT NULL,
   last_modified DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES Users(id)
@@ -26,11 +28,4 @@ CREATE TABLE Sessions (
   token TEXT NOT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES Users(id)
-);
-
-CREATE TABLE Tags (
-  entry_id INTEGER NOT NULL,
-  name TEXT NOT NULL,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (entry_id) REFERENCES Entries(id)
 );

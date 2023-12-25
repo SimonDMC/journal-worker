@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 
 export const bootstrapHandle = async (request: Request, env: Env): Promise<Response> => {
 	// remove if necessary
-	return new Response('OK');
+	//return new Response('OK');
 
 	env.DB.prepare('INSERT INTO users (username, password) VALUES (?, ?)')
 		.bind('simon', await bcrypt.hash('admin', 10))

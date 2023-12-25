@@ -37,7 +37,6 @@ export const loginHandle = async (request: Request, env: Env, ctx: ExecutionCont
 
 	// generate session token
 	const token = crypto.randomUUID().toString();
-	console.log(token);
 
 	// insert session into database
 	await env.DB.prepare('INSERT INTO sessions (user_id, token) VALUES (?, ?);').bind(user_id, token).run();

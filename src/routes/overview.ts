@@ -8,14 +8,10 @@ type Row = {
 
 type Stats = {
 	totalWords: number;
-	entries: {
-		[date: string]: {
-			tags: string[];
-		};
-	};
+	entries: string[];
 };
 
-export const statsHandle = async (request: Request, env: Env, ctx: ExecutionContext): Promise<Response> => {
+export const overviewHandle = async (request: Request, env: Env, ctx: ExecutionContext): Promise<Response> => {
 	// check for auth header
 	const auth = request.headers.get('Authorization');
 
@@ -36,7 +32,7 @@ export const statsHandle = async (request: Request, env: Env, ctx: ExecutionCont
 
 	// get data from database
 	const data = await env.DB.prepare(
-		'SELECT E.word_count, E.date, T.name AS tag FROM Users U JOIN Entries E ON U.id = E.user_id LEFT JOIN Tags T ON E.id = T.entry_id WHERE U.id = ? GROUP BY U.username, E.id, T.name ORDER BY E.id;'
+		'SELECT E.word_count, E.date FROM Users U JOIN Entries E ON U.id = E.user_id WHERE U.id = ? ORDER BY E.date;'
 	)
 		.bind(user_id)
 		.run();
@@ -44,13 +40,11 @@ export const statsHandle = async (request: Request, env: Env, ctx: ExecutionCont
 	// get into result format
 	const stats = {
 		totalWords: 0,
-		entries: {},
+		entries: [],
 	} as Stats;
 
 	for (const row of data.results as Row[]) {
-		const entry = stats.entries[row.date] || { tags: [] };
-		if (row.tag) entry.tags.push(row.tag);
-		stats.entries[row.date] = entry;
+		stats.entries.push(row.date);
 		stats.totalWords += row.word_count;
 	}
 

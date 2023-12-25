@@ -4,7 +4,7 @@ import { getEntryHandle } from './routes/get-entry';
 import { loginHandle } from './routes/login';
 import { searchHandle } from './routes/search';
 import { setEntryHandle } from './routes/set-entry';
-import { statsHandle } from './routes/stats';
+import { overviewHandle } from './routes/overview';
 
 export interface Env {
 	DB: D1Database;
@@ -13,7 +13,7 @@ export interface Env {
 type Route = [method: string, path: RegExp, handler: (request: Request, env: Env, ctx: ExecutionContext) => Promise<Response>];
 
 const routes: Route[] = [
-	['GET', /^\/stats$/, statsHandle],
+	['GET', /^\/overview$/, overviewHandle],
 	['GET', /^\/bootstrap$/, bootstrapHandle],
 	['GET', /^\/search$/, searchHandle],
 	['GET', /^\/entry\/\d{4}-\d{2}-\d{2}$/, getEntryHandle],

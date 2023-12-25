@@ -24,11 +24,13 @@ export const getEntryHandle = async (request: Request, env: Env, ctx: ExecutionC
 	const date = url.pathname.split('/')[2];
 
 	// get entry from database
-	const entry = await env.DB.prepare('SELECT content FROM Entries WHERE user_id = ? AND date = ?;').bind(user_id, date).run();
+	const entry = await env.DB.prepare('SELECT content, mood, location FROM Entries WHERE user_id = ? AND date = ?;')
+		.bind(user_id, date)
+		.run();
 
 	if (entry.results.length === 0) {
 		return new Response('Not found', { status: 404 });
 	}
 
-	return new Response(entry.results[0].content as string, { status: 200 });
+	return new Response(JSON.stringify(entry.results[0]), { status: 200 });
 };

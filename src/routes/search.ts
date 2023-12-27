@@ -1,5 +1,10 @@
 import { Env } from '..';
 
+type Entry = {
+	date: string;
+	content: string;
+};
+
 export const searchHandle = async (request: Request, env: Env, ctx: ExecutionContext): Promise<Response> => {
 	// check for auth header
 	const auth = request.headers.get('Authorization');
@@ -36,5 +41,18 @@ export const searchHandle = async (request: Request, env: Env, ctx: ExecutionCon
 		return new Response('Not found', { status: 404 });
 	}
 
-	return new Response(JSON.stringify(entries.results), { status: 200 });
+	// add +- 20 characters to the search result
+	let results = entries.results.map((e) => {
+		const entry = e as Entry; // annoying typescript stuff
+		const index = entry.content.toLowerCase().indexOf(query.toLowerCase());
+		const start = Math.max(index - 20, 0);
+		const end = Math.min(index + query.length + 20, entry.content.length);
+
+		return {
+			date: entry.date,
+			content: entry.content.slice(start, end),
+		};
+	});
+
+	return new Response(JSON.stringify(results), { status: 200 });
 };

@@ -37,7 +37,7 @@ export const setEntryHandle = async (request: Request, env: Env, ctx: ExecutionC
 		return new Response('Bad request', { status: 400 });
 	}
 
-	if (!body.content) {
+	if (body.content === undefined) {
 		return new Response('Bad request', { status: 400 });
 	}
 

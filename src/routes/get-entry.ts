@@ -29,7 +29,7 @@ export const getEntryHandle = async (request: Request, env: Env, ctx: ExecutionC
 		.run();
 
 	if (entry.results.length === 0) {
-		return new Response('Not found', { status: 404 });
+		return new Response('{}', { status: 200 });
 	}
 
 	return new Response(JSON.stringify(entry.results[0]), { status: 200 });

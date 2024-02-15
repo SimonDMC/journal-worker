@@ -8,7 +8,7 @@ export const bootstrapHandle = async (request: Request, env: Env): Promise<Respo
 
 	env.DB.prepare('INSERT INTO users (username, password) VALUES (?, ?)')
 		.bind('simon', await bcrypt.hash('admin', 10))
-		.run();
+		.all();
 
 	const entries = olddata.documentChange.document.fields.entries.mapValue.fields;
 	const keys = Object.keys(entries).sort();
@@ -23,7 +23,7 @@ export const bootstrapHandle = async (request: Request, env: Env): Promise<Respo
 			'INSERT INTO entries (date, content, last_modified, word_count, user_id) VALUES (?, ?, ?, ?, (SELECT id FROM users WHERE username = ?))'
 		)
 			.bind(date, content, lastEdited, wordCount, 'simon')
-			.run();
+			.all();
 	}
 
 	return new Response('OK');

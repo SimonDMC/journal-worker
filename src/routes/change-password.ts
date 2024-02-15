@@ -24,7 +24,7 @@ export const changePasswordHandle = async (request: Request, env: Env, ctx: Exec
 	const newPassword = body.newPassword;
 
 	// check if valid login
-	const user = await env.DB.prepare('SELECT password, id FROM Users WHERE username = ?').bind(username).run();
+	const user = await env.DB.prepare('SELECT password, id FROM Users WHERE username = ?').bind(username).all();
 
 	if (user.results.length === 0) {
 		return new Response('Unauthorized', { status: 401 });
@@ -38,12 +38,12 @@ export const changePasswordHandle = async (request: Request, env: Env, ctx: Exec
 	const user_id = user.results[0].id;
 
 	// clear all sessions
-	await env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(user_id).run();
+	await env.DB.prepare('DELETE FROM sessions WHERE user_id = ?').bind(user_id).all();
 
 	// change password in database
 	await env.DB.prepare('UPDATE Users SET password = ? WHERE id = ?')
 		.bind(await bcrypt.hash(newPassword, 10), user_id)
-		.run();
+		.all();
 
 	return new Response('OK', { status: 200 });
 };

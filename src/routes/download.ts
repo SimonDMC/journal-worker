@@ -21,7 +21,7 @@ export const downloadHandle = async (request: Request, env: Env, ctx: ExecutionC
 	}
 
 	// check if session exists
-	const session = await env.DB.prepare('SELECT user_id FROM sessions WHERE token = ?').bind(auth).run();
+	const session = await env.DB.prepare('SELECT user_id FROM sessions WHERE token = ?').bind(auth).all();
 
 	if (session.results.length === 0) {
 		return new Response('Unauthorized', { status: 401 });
@@ -35,7 +35,7 @@ export const downloadHandle = async (request: Request, env: Env, ctx: ExecutionC
 		'SELECT E.date, E.content, E.mood, E.location, E.word_count, E.last_modified FROM Users U JOIN Entries E ON U.id = E.user_id WHERE U.id = ? ORDER BY E.date;'
 	)
 		.bind(user_id)
-		.run();
+		.all();
 
 	return new Response(JSON.stringify(data, null, 2), { status: 200 });
 };

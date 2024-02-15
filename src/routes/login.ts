@@ -22,7 +22,7 @@ export const loginHandle = async (request: Request, env: Env, ctx: ExecutionCont
 	const password = body.password;
 
 	// check if valid login
-	const user = await env.DB.prepare('SELECT password, id FROM Users WHERE username = ?').bind(username).run();
+	const user = await env.DB.prepare('SELECT password, id FROM Users WHERE username = ?').bind(username).all();
 
 	if (user.results.length === 0) {
 		return new Response('Unauthorized', { status: 401 });
@@ -39,7 +39,7 @@ export const loginHandle = async (request: Request, env: Env, ctx: ExecutionCont
 	const token = crypto.randomUUID().toString();
 
 	// insert session into database
-	await env.DB.prepare('INSERT INTO sessions (user_id, token) VALUES (?, ?);').bind(user_id, token).run();
+	await env.DB.prepare('INSERT INTO sessions (user_id, token) VALUES (?, ?);').bind(user_id, token).all();
 
 	return new Response(token, { status: 200 });
 };

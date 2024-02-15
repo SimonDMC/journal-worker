@@ -23,7 +23,7 @@ export const searchHandle = async (request: Request, env: Env, ctx: ExecutionCon
 	}
 
 	// check if session exists
-	const session = await env.DB.prepare('SELECT user_id FROM sessions WHERE token = ?').bind(auth).run();
+	const session = await env.DB.prepare('SELECT user_id FROM sessions WHERE token = ?').bind(auth).all();
 
 	if (session.results.length === 0) {
 		return new Response('Unauthorized', { status: 401 });
@@ -35,7 +35,7 @@ export const searchHandle = async (request: Request, env: Env, ctx: ExecutionCon
 	// get entries from database
 	const entries = await env.DB.prepare('SELECT date, content FROM Entries WHERE user_id = ? AND content LIKE ?')
 		.bind(user_id, `%${query}%`)
-		.run();
+		.all();
 
 	if (entries.results.length === 0) {
 		return new Response('Not found', { status: 404 });

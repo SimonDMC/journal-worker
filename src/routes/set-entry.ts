@@ -16,7 +16,7 @@ export const setEntryHandle = async (request: Request, env: Env, ctx: ExecutionC
 	}
 
 	// check if session exists
-	const session = await env.DB.prepare('SELECT user_id FROM sessions WHERE token = ?').bind(auth).run();
+	const session = await env.DB.prepare('SELECT user_id FROM sessions WHERE token = ?').bind(auth).all();
 
 	if (session.results.length === 0) {
 		return new Response('Unauthorized', { status: 401 });
@@ -46,20 +46,20 @@ export const setEntryHandle = async (request: Request, env: Env, ctx: ExecutionC
 	let location = body.location ?? null;
 
 	// get entry for today if it exists
-	const entry = await env.DB.prepare('SELECT id FROM Entries WHERE user_id = ? AND date = ?;').bind(user_id, date).run();
+	const entry = await env.DB.prepare('SELECT id FROM Entries WHERE user_id = ? AND date = ?;').bind(user_id, date).all();
 
 	if (entry.results.length === 0) {
 		// add entry if it doesn't exist
 		await env.DB.prepare('INSERT INTO Entries (user_id, date, content, word_count, mood, location) VALUES (?, ?, ?, ?, ?, ?);')
 			.bind(user_id, date, content, content.split(' ').length, mood, location)
-			.run();
+			.all();
 	} else {
 		// update entry if it does exist
 		await env.DB.prepare(
 			'UPDATE Entries SET content = ?, word_count = ?, mood = ?, location = ?, last_modified = ? WHERE user_id = ? AND date = ?;'
 		)
 			.bind(content, content.split(' ').length, mood, location, new Date().toISOString(), user_id, date)
-			.run();
+			.all();
 	}
 
 	return new Response('OK', { status: 200 });

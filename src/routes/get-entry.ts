@@ -10,7 +10,7 @@ export const getEntryHandle = async (request: Request, env: Env, ctx: ExecutionC
 	}
 
 	// check if session exists
-	const session = await env.DB.prepare('SELECT user_id FROM sessions WHERE token = ?').bind(auth).run();
+	const session = await env.DB.prepare('SELECT user_id FROM sessions WHERE token = ?').bind(auth).all();
 
 	if (session.results.length === 0) {
 		return new Response('Unauthorized', { status: 401 });
@@ -26,7 +26,7 @@ export const getEntryHandle = async (request: Request, env: Env, ctx: ExecutionC
 	// get entry from database
 	const entry = await env.DB.prepare('SELECT content, mood, location FROM Entries WHERE user_id = ? AND date = ?;')
 		.bind(user_id, date)
-		.run();
+		.all();
 
 	if (entry.results.length === 0) {
 		return new Response('{}', { status: 200 });

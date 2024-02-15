@@ -5,6 +5,7 @@ import { loginHandle } from './routes/login';
 import { searchHandle } from './routes/search';
 import { setEntryHandle } from './routes/set-entry';
 import { overviewHandle } from './routes/overview';
+import { downloadHandle } from './routes/download';
 
 export interface Env {
 	DB: D1Database;
@@ -17,6 +18,7 @@ const routes: Route[] = [
 	['GET', /^\/bootstrap$/, bootstrapHandle],
 	['GET', /^\/search$/, searchHandle],
 	['GET', /^\/entry\/\d{4}-\d{2}-\d{2}$/, getEntryHandle],
+	['GET', /^\/download$/, downloadHandle],
 	['POST', /^\/entry\/\d{4}-\d{2}-\d{2}$/, setEntryHandle],
 	['POST', /^\/login$/, loginHandle],
 	['POST', /^\/change-password$/, changePasswordHandle],
